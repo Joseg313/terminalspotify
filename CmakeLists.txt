@@ -7,4 +7,10 @@ set(SOURCES
 
 )
 
+add_subdirectory(cpr)
+include_directories(${CPR_INCLUDE_DIRS})
+
+
 add_executable(terminalspotify ${SOURCES})
+
+target_link_libraries(terminalspotify ${CPR_LIBRARIES})
