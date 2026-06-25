@@ -1,0 +1,3 @@
+C:/Users/501ja/Documents/terminalspotify/build/CMakeFiles/terminalspotify.dir
+C:/Users/501ja/Documents/terminalspotify/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/501ja/Documents/terminalspotify/build/CMakeFiles/ZERO_CHECK.dir
