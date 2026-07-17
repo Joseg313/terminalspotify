@@ -3,3 +3,6 @@
 vcpkg/
 vcpkg_installed/
 .vscode/
+CMakeUserPresets.json
+build/
+out/

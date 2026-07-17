@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include <fstream>
+#include <cpr/cpr.h>
 
 std::string get_env_var(std::string key) {
     std::string line {};
@@ -9,7 +9,7 @@ std::string get_env_var(std::string key) {
         std::cerr << "could not open env file \n";
     }
     std::string value {};
-    value ="idk";
+    value = "idk";
     while (getline (env_file, line)) {
         // find an equal sign in the line
         int index = line.find('=');
@@ -18,7 +18,7 @@ std::string get_env_var(std::string key) {
             // if all text before equal sign mateches return the text after equal sign
             
             if (key == line.substr(0,index)) {
-                value = line.substr(index+1, line.size()-index-1);
+                value = line.substr(index+2, line.size()-key.size()-3);
                 return value;
             } else {
                 
@@ -43,22 +43,22 @@ std::string get_token() {
     std::cout << client_id << std::endl;
     std::cout << client_secret << std::endl;
 
-    return "you good fam";
+    // return "you good fam";
     
     
     
     // use POST
-    // cpr::Response r = cpr::Post(
-    //     cpr::Url{"https://accounts.spotify.com/api/token"},
-    //     cpr::Header{{"Content-Type", "application/x-www-form-urlencoded"}},
-    //     cpr::Payload{
-    //         {"grant_type", "client_credentials"},
-    //         {"client_id", client_id},
-    //         {"client_secret", client_secret}
-    //     }
-    // );
-
-    // return r.text;
+    cpr::Response r = cpr::Post(
+        cpr::Url{"https://accounts.spotify.com/api/token"},
+        cpr::Header{{"Content-Type", "application/x-www-form-urlencoded"}},
+        cpr::Payload{
+            {"grant_type", "client_credentials"},
+            {"client_id", client_id},
+            {"client_secret", client_secret}
+        }
+    );
+    std::cout << r.text << std::endl;
+    return r.text;
 }
 
 
