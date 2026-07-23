@@ -4,6 +4,7 @@ project(terminalSpotify)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(cpr CONFIG REQUIRED)
+find_package(OpenSSL REQUIRED)
 
 set(SOURCES
     main.cpp
@@ -12,4 +13,8 @@ set(SOURCES
 )
 add_executable(terminalSpotify ${SOURCES})
 
-target_link_libraries(terminalSpotify PRIVATE cpr::cpr)
+target_link_libraries(terminalSpotify PRIVATE
+    cpr::cpr
+    OpenSSL::SSL
+    OpenSSL::Crypto
+)
