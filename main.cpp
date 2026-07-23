@@ -1,5 +1,6 @@
 #include <iostream>
 #include "commands.h"
+#include "codeGenerator.h"
 #include <string>
 int main() {
     std::cout << "Enter Command: ";
@@ -7,8 +8,9 @@ int main() {
     std::getline(std::cin >> std::ws, command);
     std:: cout << command << '\n';
     // get acess token using POST
-    std::cout << get_token() << '\n';
-    std::cout << song_name() << '\n';
+    // std::cout << get_token() << '\n';
+    // std::cout << song_name() << '\n';
+    std::cout << generateRandomString( 10 ) <<std::endl;
     return 0;
 
 }

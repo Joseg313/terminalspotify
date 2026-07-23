@@ -8,6 +8,7 @@ find_package(cpr CONFIG REQUIRED)
 set(SOURCES
     main.cpp
     commands.cpp
+    codeGenerator.cpp
 )
 add_executable(terminalSpotify ${SOURCES})
 

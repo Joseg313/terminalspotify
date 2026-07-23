@@ -9,6 +9,7 @@
                 "-g",
                 "main.cpp",
                 "commands.cpp",
+                "codeGenerator.cpp",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],
