@@ -30,4 +30,9 @@ std::string bas64sha256 (const std::string& plainString) {
     }
 
     // base64 encode the digest
+    std::string encode(4*((digestLen+2)/3), '\0');
+    int encodeLen = EVP_EncodeBlock(reinterpret_cast<unsigned char *>(encode.data()), digest, static_cast<int>(digestLen));
+    encode.resize(encodeLen);
+    return encode;
+
 }

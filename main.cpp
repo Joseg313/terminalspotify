@@ -11,6 +11,7 @@ int main() {
     // std::cout << get_token() << '\n';
     // std::cout << song_name() << '\n';
     std::cout << generateRandomString( 10 ) <<std::endl;
+    std::cout << bas64sha256("Hello world")<< std::endl;
     return 0;
 
 }
