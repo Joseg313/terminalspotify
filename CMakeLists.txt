@@ -10,6 +10,7 @@ set(SOURCES
     main.cpp
     commands.cpp
     codeGenerator.cpp
+    authFlow.cpp
 )
 add_executable(terminalSpotify ${SOURCES})
 
