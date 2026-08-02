@@ -1,17 +1,15 @@
 #include <iostream>
 #include "commands.h"
 #include "codeGenerator.h"
+#include "authFlow.h"
 #include <string>
 int main() {
     std::cout << "Enter Command: ";
     std::string command {};
     std::getline(std::cin >> std::ws, command);
     std:: cout << command << '\n';
-    // get acess token using POST
-    // std::cout << get_token() << '\n';
-    // std::cout << song_name() << '\n';
-    std::cout << generateRandomString( 10 ) <<std::endl;
-    std::cout << bas64sha256("Hello world")<< std::endl;
+    
+    initialAuth();
     return 0;
 
 }
