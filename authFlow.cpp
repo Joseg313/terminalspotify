@@ -1,8 +1,22 @@
 #include <iostream>
 #include <string>
+#include <cstdlib>
 #include <cpr/cpr.h>
 #include "commands.h"
 #include "codeGenerator.h"
+#include <cstdlib>
+#include <string>
+
+void openUrl(const std::string& url) {
+#if defined(_WIN32)
+    std::string cmd = "start \"\" \"" + url + "\"";
+#elif defined(__APPLE__)
+    std::string cmd = "open \"" + url + "\"";
+#else
+    std::string cmd = "xdg-open \"" + url + "\"";
+#endif
+    std::system(cmd.c_str());
+}
 
 void initialAuth() {
     std::string codeVerifier = generateRandomString(64);
@@ -45,6 +59,7 @@ void initialAuth() {
     
 
     if (r.status_code == 200) {
+        openUrl(static_cast<std::string>(r.url));
         std::cout << "If not automatically directed, visit this link: ";
         std::cout << r.url << std::endl; 
     }
