@@ -9,6 +9,7 @@
 #include <string>
 #include "winsock.h"
 #include "server.h"
+#include "httplib.h"
 void openUrl(const std::string& url) {
 #if defined(_WIN32)
     std::string cmd = "start \"\" \"" + url + "\"";
@@ -69,7 +70,10 @@ void initialAuth() {
         std::cout << r.url << std::endl; 
         
         // create a thread for the server to run on
-        codeServer();
+        int result {codeServer()};
+        // (httplib::Server).stop();
+        std::cout<< "the result of code server: "<<result << std::endl;
+        
     }
     else {
         std::cout << "Error, Status code: " << r.status_code << std::endl; 

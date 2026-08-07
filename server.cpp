@@ -4,11 +4,13 @@
 
 int codeServer() {
     httplib::Server svr;
-    
-    svr.Get("/callback", [](const auto &req, auto &res) {
-        auto code = req.get_param_value("code");
+    std::string code{};
+    svr.Get("/callback", [&code,&svr](const auto &req, auto &res) {
+        code = req.get_param_value("code");
         std::cout << "code: " << code << std::endl;
-        res.set_content("Query: " + code, "text/plain");
+        res.set_content("Successful! You can close this tab and return to the terminal", "text/plain");
+        int x{5};
+        svr.stop();
         
     });
 
@@ -16,6 +18,6 @@ int codeServer() {
     
     svr.listen("127.0.0.1", 8000);
    
-    
+    std::cout << "code again:" << code << std::endl;
     return 0;
 }
