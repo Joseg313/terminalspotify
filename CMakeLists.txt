@@ -12,6 +12,7 @@ set(SOURCES
     codeGenerator.cpp
     authFlow.cpp
     winsock.cpp
+    server.cpp
 )
 add_executable(terminalSpotify ${SOURCES})
 

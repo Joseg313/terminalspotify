@@ -2,11 +2,13 @@
 #include <string>
 #include <cstdlib>
 #include <cpr/cpr.h>
+#include <thread>
 #include "commands.h"
 #include "codeGenerator.h"
 #include <cstdlib>
 #include <string>
 #include "winsock.h"
+#include "server.h"
 void openUrl(const std::string& url) {
 #if defined(_WIN32)
     std::string cmd = "start \"\" \"" + url + "\"";
@@ -59,18 +61,15 @@ void initialAuth() {
     
 
     if (r.status_code == 200) {
-        // start listen socket
-        SOCKET ListenSocket = socListen();
+        
+
         // open redirect link
         openUrl(static_cast<std::string>(r.url));
         std::cout << "If not automatically directed, visit this link: ";
         std::cout << r.url << std::endl; 
         
-        // wait for callback
-        if (ListenSocket)
-            std::cout << "soccallback return number: "<<socCallback(ListenSocket)<< std::endl;
-        else
-            std::cout << "the else of listensocket" << std::endl;
+        // create a thread for the server to run on
+        codeServer();
     }
     else {
         std::cout << "Error, Status code: " << r.status_code << std::endl; 
