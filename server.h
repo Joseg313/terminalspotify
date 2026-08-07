@@ -1,3 +1,2 @@
 #pragma once
-
-int codeServer();
+std::pair<int, std::string> codeServer();

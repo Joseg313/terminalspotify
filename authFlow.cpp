@@ -22,8 +22,9 @@ void openUrl(const std::string& url) {
 }
 
 void initialAuth() {
-    std::string codeVerifier = generateRandomString(64);
-    std::string codeChallenge = bas64sha256(codeVerifier);
+    const std::string codeVerifier {generateRandomString(64)};
+    const std::string codeChallenge {bas64sha256(codeVerifier)};
+    std::cout << "code verifier " << codeVerifier << std::endl;
     std::cout << "code challenge " << codeChallenge << std::endl;
     std::string clientId = get_env_var("SPOTIFY_CLIENT_ID");
     std::cout << "client id "<<clientId <<std::endl;
@@ -59,7 +60,8 @@ void initialAuth() {
             {"redirect_uri",redirectUri}
         }   
     );
-    
+    std::cout << "code verifier " << codeVerifier << std::endl;
+    std::cout << "code challenge " << codeChallenge << std::endl;
 
     if (r.status_code == 200) {
         
@@ -69,10 +71,32 @@ void initialAuth() {
         std::cout << "If not automatically directed, visit this link: ";
         std::cout << r.url << std::endl; 
         
-        // create a thread for the server to run on
-        int result {codeServer()};
-        // (httplib::Server).stop();
-        std::cout<< "the result of code server: "<<result << std::endl;
+        // run ther server
+        auto [status, code] = codeServer();
+        std::cout << status << std::endl;
+        std::cout << code << std::endl;
+        if (status == 0) {
+            // send a post with the code we just got
+            cpr::Response r = cpr::Post(
+                cpr::Url{"https://accounts.spotify.com/api/token"},
+                cpr::Payload{
+                    {"grant_type","authorization_code"},
+                    {"code",code},
+                    {"redirect_uri",redirectUri},
+                    {"client_id",clientId},
+                    {"code_verifier",codeVerifier}
+                },
+                cpr::Header{{"Content-Type", "application/x-www-form-urlencoded"}}   
+            );
+            std::cout << "code verifier " << codeVerifier << std::endl;
+            std::cout << "code challenge " << codeChallenge << std::endl;
+            std::cout << r.status_code <<std::endl;
+            std::cout << r.text <<std::endl;
+        }
+        else 
+        {
+            std::cout<< "idk something went wrong after the redirect" <<std::endl;
+        }
         
     }
     else {

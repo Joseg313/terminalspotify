@@ -33,6 +33,17 @@ std::string bas64sha256 (const std::string& plainString) {
     std::string encode(4*((digestLen+2)/3), '\0');
     int encodeLen = EVP_EncodeBlock(reinterpret_cast<unsigned char *>(encode.data()), digest, static_cast<int>(digestLen));
     encode.resize(encodeLen);
+    for (char& c : encode) {
+        if (c == '+') c = '-';
+        else if (c == '/') c = '_';
+    }
+    
+    while (!encode.empty() && encode.back() == '=') {
+        encode.pop_back();
+    }
+    
+    
+    
     return encode;
 
 }
