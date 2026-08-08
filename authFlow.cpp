@@ -10,6 +10,8 @@
 #include "winsock.h"
 #include "server.h"
 #include "httplib.h"
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 void openUrl(const std::string& url) {
 #if defined(_WIN32)
     std::string cmd = "start \"\" \"" + url + "\"";
@@ -24,10 +26,9 @@ void openUrl(const std::string& url) {
 void initialAuth() {
     const std::string codeVerifier {generateRandomString(64)};
     const std::string codeChallenge {bas64sha256(codeVerifier)};
-    std::cout << "code verifier " << codeVerifier << std::endl;
-    std::cout << "code challenge " << codeChallenge << std::endl;
+   
     std::string clientId = get_env_var("SPOTIFY_CLIENT_ID");
-    std::cout << "client id "<<clientId <<std::endl;
+
     const std::string responseType {"code"};
     const std::string redirectUri {"http://127.0.0.1:8000/callback"};
     const std::string scope {
@@ -60,9 +61,7 @@ void initialAuth() {
             {"redirect_uri",redirectUri}
         }   
     );
-    std::cout << "code verifier " << codeVerifier << std::endl;
-    std::cout << "code challenge " << codeChallenge << std::endl;
-
+   
     if (r.status_code == 200) {
         
 
@@ -73,8 +72,7 @@ void initialAuth() {
         
         // run ther server
         auto [status, code] = codeServer();
-        std::cout << status << std::endl;
-        std::cout << code << std::endl;
+        
         if (status == 0) {
             // send a post with the code we just got
             cpr::Response r = cpr::Post(
@@ -88,10 +86,20 @@ void initialAuth() {
                 },
                 cpr::Header{{"Content-Type", "application/x-www-form-urlencoded"}}   
             );
-            std::cout << "code verifier " << codeVerifier << std::endl;
-            std::cout << "code challenge " << codeChallenge << std::endl;
-            std::cout << r.status_code <<std::endl;
-            std::cout << r.text <<std::endl;
+            if (r.status_code == 200){
+                //std::cout << r.text << std::endl;
+                // parse the response
+                json parsed = json::parse(r.text);
+                
+                // std::string accessToken {};
+                int expiresIn{parsed["expires_in"]};
+                std::cout << expiresIn << std::endl;
+                // std::string refreshToken{};
+
+            } else {
+                std::cout << "Error, Status code: " << r.status_code<<std::endl;
+            }
+            
         }
         else 
         {

@@ -37,7 +37,6 @@ std::string bas64sha256 (const std::string& plainString) {
         if (c == '+') c = '-';
         else if (c == '/') c = '_';
     }
-    
     while (!encode.empty() && encode.back() == '=') {
         encode.pop_back();
     }
