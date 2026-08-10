@@ -4,5 +4,7 @@
 #include <cpr/cpr.h>
 
 std::string get_env_var(std::string key);
-std::string get_token();
-std::string song_name();
+std::string get_info_from_authjson(std::string info);
+std::string get_access_token();
+std::string get_refresh_token();
+std::string get_current_playing();

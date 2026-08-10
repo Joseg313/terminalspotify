@@ -1,7 +1,9 @@
 #include <iostream>
 #include <string>
 #include <cpr/cpr.h>
-
+#include <fstream>
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 std::string get_env_var(std::string key) {
     std::string line {};
     std::ifstream env_file(".env");
@@ -35,38 +37,37 @@ std::string get_env_var(std::string key) {
 }
 
 
-std::string get_token() {
-    // get the client_id and client_secret from .env
-    std::string client_id = {get_env_var("SPOTIFY_CLIENT_ID")};
-    
-    std::string client_secret = {get_env_var("SPOTIFY_CLIENT_SECRET")};
-    std::cout << client_id << std::endl;
-    std::cout << client_secret << std::endl;
+std::string get_info_from_authjson(std::string info) {
+    std::ifstream readFile("auth.json");
+    json jsonData;
+    if (readFile.is_open()) { 
+        readFile>>jsonData;
+    }
+    readFile.close();
+    return jsonData[info];
+}
 
-    // return "you good fam";
-    
-    
-    
-    // use POST
-    cpr::Response r = cpr::Post(
-        cpr::Url{"https://accounts.spotify.com/api/token"},
-        cpr::Header{{"Content-Type", "application/x-www-form-urlencoded"}},
-        cpr::Payload{
-            {"grant_type", "client_credentials"},
-            {"client_id", client_id},
-            {"client_secret", client_secret}
-        }
-    );
-    std::cout << r.text << std::endl;
-    return r.text;
+std::string get_access_token() {
+    std::string accessToken {get_info_from_authjson("access_token")};
+    return accessToken;
+}
+std::string get_refresh_token() {
+    std::string refreshToken {get_info_from_authjson("refresh_token")};
+    return refreshToken;
 }
 
 
-std::string song_name() {
-    
-    std::string song {"mobamba"};
-    // cpr::Response r = cpr::Get(cpr::Url{"https://api.spotify.com/v1/me/player/currently-playing"});
-    // return r.text;
+std::string get_current_playing() {
+    std::string song {};
+    // curl --request GET \
+    // --url https://api.spotify.com/v1/me/player/currently-playing \
+    // --header 'Authorization: Bearer 1POdFZRZbvb...qqillRxMr2z'
+    cpr::Response r = cpr::Get(
+        cpr::Url{"https://api.spotify.com/v1/me/player/currently-playing"},
+        cpr::Header{{"Authorization", "Bearer " + get_access_token()}}   
+    );
+    song = r.text;
+    std::cout << song <<std::endl;
     return song;
 
 }

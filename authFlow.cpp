@@ -11,10 +11,12 @@
 #include "server.h"
 #include "httplib.h"
 #include <nlohmann/json.hpp>
+#include <fstream>
 using json = nlohmann::json;
 void openUrl(const std::string& url) {
 #if defined(_WIN32)
     std::string cmd = "start \"\" \"" + url + "\"";
+    
 #elif defined(__APPLE__)
     std::string cmd = "open \"" + url + "\"";
 #else
@@ -22,6 +24,11 @@ void openUrl(const std::string& url) {
 #endif
     std::system(cmd.c_str());
 }
+
+
+
+
+
 
 void initialAuth() {
     const std::string codeVerifier {generateRandomString(64)};
@@ -87,14 +94,17 @@ void initialAuth() {
                 cpr::Header{{"Content-Type", "application/x-www-form-urlencoded"}}   
             );
             if (r.status_code == 200){
-                //std::cout << r.text << std::endl;
+                
                 // parse the response
                 json parsed = json::parse(r.text);
+                std::fstream myFile;
+                myFile.open("auth.json", std::ios::out);
+                if (myFile.is_open()) {
+                    myFile << parsed << std::endl;
+                }
+                myFile.close();
                 
-                // std::string accessToken {};
-                int expiresIn{parsed["expires_in"]};
-                std::cout << expiresIn << std::endl;
-                // std::string refreshToken{};
+                
 
             } else {
                 std::cout << "Error, Status code: " << r.status_code<<std::endl;
@@ -111,7 +121,7 @@ void initialAuth() {
         std::cout << "Error, Status code: " << r.status_code << std::endl; 
     }
     
-
+    
 
 }
 

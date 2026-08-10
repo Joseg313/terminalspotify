@@ -6,3 +6,4 @@ vcpkg_installed/
 CMakeUserPresets.json
 build/
 out/
+*auth.json

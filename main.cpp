@@ -9,7 +9,8 @@ int main() {
     std::getline(std::cin >> std::ws, command);
     std:: cout << command << '\n';
     
-    initialAuth();
+    // initialAuth();
+    get_current_playing();
     return 0;
 
 }
