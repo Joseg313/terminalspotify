@@ -26,10 +26,6 @@ void openUrl(const std::string& url) {
 }
 
 
-
-
-
-
 void initialAuth() {
     const std::string codeVerifier {generateRandomString(64)};
     const std::string codeChallenge {bas64sha256(codeVerifier)};
@@ -126,5 +122,30 @@ void initialAuth() {
 }
 
 
+void getNewAccessToken () {
+    const std::string refreshToken {get_refresh_token()};
+    const std::string clientId {get_env_var("SPOTIFY_CLIENT_ID")};
+    cpr::Response r = cpr::Post(
+        cpr::Url{"https://accounts.spotify.com/api/token"},
+        cpr::Payload{
+            {"grant_type","refresh_token"},
+            {"refresh_token",refreshToken},
+            {"client_id",clientId}
+        },
+        cpr::Header{{"Content-Type", "application/x-www-form-urlencoded"}}   
+    );
+    if (r.status_code == 200){                
+        // parse the response
+        json parsed = json::parse(r.text);
+        std::fstream myFile;
+        myFile.open("auth.json", std::ios::out);
+        if (myFile.is_open()) {
+            myFile << parsed << std::endl;
+        }
+        myFile.close();
+    } else {
+        std::cout << "Error, Status code: " << r.status_code<<std::endl;
+    }
 
+}
 

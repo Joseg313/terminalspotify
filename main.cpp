@@ -3,6 +3,7 @@
 #include "codeGenerator.h"
 #include "authFlow.h"
 #include <string>
+#include <optional>
 int main() {
     std::cout << "Enter Command: ";
     std::string command {};
@@ -10,7 +11,11 @@ int main() {
     std:: cout << command << '\n';
     
     // initialAuth();
-    get_current_playing();
+    if (!((get_current_playing()).has_value())) {
+        get_current_playing();
+    }
+        
+    
     return 0;
 
 }

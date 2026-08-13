@@ -3,6 +3,8 @@
 #include <cpr/cpr.h>
 #include <fstream>
 #include <nlohmann/json.hpp>
+#include <optional>
+#include "authFlow.h"
 using json = nlohmann::json;
 std::string get_env_var(std::string key) {
     std::string line {};
@@ -57,15 +59,16 @@ std::string get_refresh_token() {
 }
 
 
-std::string get_current_playing() {
+std::optional<std::string> get_current_playing() {
     std::string song {};
-    // curl --request GET \
-    // --url https://api.spotify.com/v1/me/player/currently-playing \
-    // --header 'Authorization: Bearer 1POdFZRZbvb...qqillRxMr2z'
     cpr::Response r = cpr::Get(
         cpr::Url{"https://api.spotify.com/v1/me/player/currently-playing"},
         cpr::Header{{"Authorization", "Bearer " + get_access_token()}}   
     );
+    if (r.status_code == 401) {
+        getNewAccessToken();
+        return std::nullopt;
+    }
     song = r.text;
     std::cout << song <<std::endl;
     return song;
