@@ -97,8 +97,11 @@ void initialAuth() {
                 myFile.open("auth.json", std::ios::out);
                 if (myFile.is_open()) {
                     myFile << parsed << std::endl;
+                    myFile.close();
+                } else {
+                    std::cout << "auth.json could not open" << std::endl;
                 }
-                myFile.close();
+                
                 
                 
 
@@ -138,11 +141,28 @@ void getNewAccessToken () {
         // parse the response
         json parsed = json::parse(r.text);
         std::fstream myFile;
-        myFile.open("auth.json", std::ios::out);
+        myFile.open("auth.json", std::ios::out | std::ios::in);
         if (myFile.is_open()) {
-            myFile << parsed << std::endl;
+            std::string line;
+            std::getline(myFile, line);
+            json contents = json::parse(line);
+            if (parsed.contains("refresh_token")) {
+                contents["refresh_token"] = parsed["refresh_token"];
+            }
+            contents["scope"] = parsed["scope"];
+            contents["expires_in"] = parsed["expires_in"];
+            contents["access_token"] = parsed["access_token"];
+            contents["token_type"] = parsed["token_type"];
+            myFile << contents << std::endl;
+            myFile.close();
+
+            std::ofstream outFile("auth.json", std::ios::out | std::ios::trunc);
+            outFile << contents << std::endl;
+            outFile.close();
+        } else {
+            std::cout << "auth.json could not open" << std::endl;
         }
-        myFile.close();
+        
     } else {
         std::cout << "Error, Status code: " << r.status_code<<std::endl;
     }

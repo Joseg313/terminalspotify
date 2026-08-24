@@ -44,9 +44,14 @@ std::string get_info_from_authjson(std::string info) {
     json jsonData;
     if (readFile.is_open()) { 
         readFile>>jsonData;
+    } else {
+        throw std::runtime_error("Could not open auth.json");
     }
-    readFile.close();
-    return jsonData[info];
+
+    if (!jsonData.contains(info)) {
+        throw std::runtime_error("Key not found in auth.json: " + info);
+    }
+    return jsonData.at(info).get<std::string>();
 }
 
 std::string get_access_token() {
@@ -59,18 +64,45 @@ std::string get_refresh_token() {
 }
 
 
-std::optional<std::string> get_current_playing() {
+bool get_current_playing() {
     std::string song {};
     cpr::Response r = cpr::Get(
         cpr::Url{"https://api.spotify.com/v1/me/player/currently-playing"},
         cpr::Header{{"Authorization", "Bearer " + get_access_token()}}   
     );
-    if (r.status_code == 401) {
-        getNewAccessToken();
-        return std::nullopt;
+    if (r.status_code != 200 || r.text.empty()) {
+        return false;
     }
-    song = r.text;
-    std::cout << song <<std::endl;
-    return song;
+    try {
+        json jsonData = json::parse(r.text);
+        if (!jsonData.contains("item") || jsonData["item"].is_null()){
+            return false;
+        }
+        if (jsonData["item"].contains("album") &&
+            jsonData["item"]["album"].contains("images")) {
+            std::cout << jsonData["item"]["album"]["images"].dump() << std::endl;
+        }
+        bool isPlaying = jsonData.value("is_playing", false);
+        return isPlaying;
+    
+        
+    }
+    catch (const json::exception& e) {
+        std::cerr << "json parse error: " << e.what() << std::endl;
+        return false;
+    }
 
+}
+
+bool nextSong() {
+    cpr::Response r = cpr::Post(
+        cpr::Url{"https://api.spotify.com/v1/me/player/next"},
+        cpr::Header{{"Authorization", "Bearer " + get_access_token()}}   
+    );
+    std::cout << r.status_code<<std::endl;
+    if (r.status_code == 204) {
+        return 0;
+    } else {
+        return 1;
+    }
 }

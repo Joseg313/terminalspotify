@@ -7,4 +7,5 @@ std::string get_env_var(std::string key);
 std::string get_info_from_authjson(std::string info);
 std::string get_access_token();
 std::string get_refresh_token();
-std::optional<std::string> get_current_playing();
+bool get_current_playing();
+bool nextSong();
